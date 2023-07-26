@@ -1,0 +1,141 @@
+import mysql.connector
+import pandas as pd
+#import psycopg2
+import streamlit as st
+import PIL
+from PIL import Image
+from streamlit_option_menu import option_menu
+import plotly.express as px
+import pandas as pd
+
+import requests
+# connect to the database
+import mysql.connector
+#establishing the connection
+conn = mysql.connector.connect(user='root', password='1234', host='localhost', auth_plugin = "mysql_native_password",database="phonepe_pulse")
+# create a cursor object
+cursor = conn.cursor()
+SELECT = option_menu(
+    menu_title = None,
+    options = ["About","Home","Basic insights","Contact"],
+    icons =["bar-chart","house","toggles","at"],
+    default_index=2,
+    orientation="horizontal",
+    styles={"container": {"padding": "0!important", "background-color": "white","size":"cover", "width": "100%"},
+        "icon": {"color": "black", "font-size": "20px"},
+        "nav-link": {"font-size": "20px", "text-align": "center", "margin": "-2px", "--hover-color": "#6F36AD"},
+        "nav-link-selected": {"background-color": "#6F36AD"}})
+if SELECT == "Basic insights":
+    st.title("BASIC INSIGHTS")
+    st.write("----")
+    st.subheader("Let's know some basic insights about the data")
+    options = ["--select--",
+               "Top 10 states based on year and amount of transaction",
+               "List 10 states based on type and amount of transaction",
+               
+               "Top 10 Registered-users based on States and District",
+               "Top 10 Districts based on states and Count of transaction",
+               "List 10 Districts based on states and amount of transaction",
+               "List 10 Transaction_Count based on Districts and states",
+               "Top 10 RegisteredUsers based on states and District"]
+    
+    # 1
+
+    select = st.selectbox("Select the option", options)
+    if select == "Top 10 states based on year and amount of transaction":
+        cursor.execute(
+            "SELECT DISTINCT State, Year, SUM(Transaction_Amount) AS Total_Transaction_Amount FROM aggregated_transaction GROUP BY State,Year ORDER BY Total_Transaction_Amount DESC LIMIT 10");
+
+        df = pd.DataFrame(cursor.fetchall(), columns=['State', 'Year', 'Transaction_Amount'])
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(df)
+        with col2:
+            st.title("Top 10 states and amount of transaction")
+            st.bar_chart(data=df, x="Transaction_Amount", y="State")
+             # 2
+
+    elif select == "List 10 states based on type and amount of transaction":
+        cursor.execute(
+            "SELECT DISTINCT State, SUM(Transaction_Count) as Total FROM top_transaction GROUP BY State ORDER BY Total ASC LIMIT 10");
+        df = pd.DataFrame(cursor.fetchall(), columns=['State', 'Total_Transaction'])
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(df)
+        with col2:
+            st.title("List 10 states based on type and amount of transaction")
+            st.bar_chart(data=df, x="Total_Transaction", y="State")
+             # 3
+
+    elif select == "Top 10 Registered-users based on States and District":
+        cursor.execute(
+            "SELECT DISTINCT State, District_pincode, SUM(Registered_User) AS Users FROM top_user GROUP BY State, District_pincode ORDER BY state DESC LIMIT 10");
+        df = pd.DataFrame(cursor.fetchall(), columns=['State', 'District_pincode', 'Registered_User'])
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(df)
+        with col2:
+            st.title("Top 10 Registered-users based on States and District")
+            st.bar_chart(data=df, x="State", y="Registered_User")
+            # 4
+
+    elif select == "Top 10 Districts based on states and Count of transaction":
+        cursor.execute(
+            "SELECT DISTINCT State,District,SUM(Transaction_Count) AS Counts FROM map_transaction GROUP BY State,District ORDER BY Counts DESC LIMIT 10");
+        df = pd.DataFrame(cursor.fetchall(), columns=['State', 'District', 'Transaction_Count'])
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(df)
+        with col2:
+            st.title("Top 10 Districts based on states and Count of transaction")
+            st.bar_chart(data=df, x="State", y="Transaction_Count")
+            # 5
+
+    elif select == "List 10 Districts based on states and amount of transaction":
+        cursor.execute(
+            "SELECT DISTINCT State,year,SUM(Transaction_Amount) AS Amount FROM aggregated_transaction GROUP BY State,year ORDER BY Amount ASC LIMIT 10");
+        df = pd.DataFrame(cursor.fetchall(), columns=['States', 'Transaction_year', 'Transaction_Amount'])
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(df)
+        with col2:
+            st.title("Least 10 Districts based on states and amount of transaction")
+            st.bar_chart(data=df, x="States", y="Transaction_Amount")
+            # 6
+
+    elif select == "List 10 Transaction_Count based on Districts and states":
+        cursor.execute(
+            "SELECT DISTINCT State, District, SUM(Transaction_Count) AS Counts FROM map_transaction GROUP BY State,District ORDER BY Counts ASC LIMIT 10");
+        df = pd.DataFrame(cursor.fetchall(), columns=['State', 'District', 'Transaction_Count'])
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(df)
+        with col2:
+            st.title("List 10 Transaction_Count based on Districts and states")
+            st.bar_chart(data=df, x="State", y="Transaction_Count")
+
+            # 7
+
+    elif select == "Top 10 RegisteredUsers based on states and District":
+        cursor.execute(
+            "SELECT DISTINCT State,District, SUM(Registered_User) AS Users FROM map_user GROUP BY State,District ORDER BY Users DESC LIMIT 10");
+        df = pd.DataFrame(cursor.fetchall(), columns=['State', 'District', 'Registered_User'])
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(df)
+        with col2:
+            st.title("Top 10 RegisteredUsers based on states and District")
+            st.bar_chart(data=df, x="State", y="Registered_User")
+            
+
+
+
+
+
+
+
+    
+    
+    
+    
+
