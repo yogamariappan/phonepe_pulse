@@ -1,8 +1,8 @@
-#** phonepe_pulse Data Visualization and Exploration**
+# phonepe_pulse Data Visualization and Exploration
 
-**##Domain: Fintech**
+## Domain: Fintech
 
- ## **Technologies**
+ ## Technologies
 
      - Github Cloning
      - Python
@@ -11,10 +11,10 @@
      - Streamlit 
      - Plotly
 
-##****Problem Statement:** ** 
+## Problem Statement: 
          The Phonepe pulse Github repository contains a large amount of data related to various metrics and statistics. The goal is to extract this data and process it to obtain insights and information that can be visualized in a user-friendly manner. 
 
-         ###The solution must include the following steps:
+         ##The solution must include the following steps
 
 
         - Extract data from the Phonepe pulse Github repository through scripting and clone it.
